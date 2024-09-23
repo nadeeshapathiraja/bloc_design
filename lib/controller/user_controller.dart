@@ -4,6 +4,7 @@ import 'package:bloc_patterns/services/api_service.dart';
 import 'package:bloc_patterns/services/http_services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
+import 'package:logger/logger.dart';
 
 import '../model/user_data_model.dart';
 import '../model/user_model.dart';
@@ -24,7 +25,7 @@ class UserController {
       ApiService.loginApi,
       body,
     );
-    print("Response: " + response.body);
+    print("Response: ${response.body}");
     dynamic result = jsonDecode(response.body);
     if (response.statusCode == 200) {
       // data kiyala variyable ekakin enawa nm data and after pass this type
@@ -47,16 +48,18 @@ class UserController {
   static Future<UserDataModel> getUserDetails() async {
     //Get token from secure stroge
     // Create storage
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
 
     // Read value
     String? userData = await storage.read(key: "LoginData");
-    UserModel logindataModel = jsonDecode(userData!);
-
+    Logger().w("userData 2");
+    UserModel logindataModel = userModelFromJson(userData!);
+    Logger().w(logindataModel.token);
     Response response = await getRequest(
-      ApiService.loginApi,
+      ApiService.getUserData,
       token: logindataModel.token,
     );
+    Logger().d(response.body);
 
     dynamic result = jsonDecode(response.body);
     if (response.statusCode == 200) {

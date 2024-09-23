@@ -1,11 +1,9 @@
-import 'dart:async';
-import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_patterns/controller/user_controller.dart';
-import 'package:bloc_patterns/model/user_model.dart';
 import 'package:equatable/equatable.dart';
+import 'package:logger/logger.dart';
 
 import '../model/user_data_model.dart';
 
@@ -15,9 +13,6 @@ class UserDataEvent extends Equatable {
 }
 
 class GetUserData extends UserDataEvent {
-  final String token;
-
-  GetUserData(this.token);
   @override
   List<Object?> get props => [];
 }
@@ -41,6 +36,9 @@ class DataLoadingState extends DataState {
 
 //Data success state
 class DataSuccessState extends DataState {
+  final UserDataModel userDataModel;
+
+  DataSuccessState(this.userDataModel);
   @override
   List<Object?> get props => [];
 }
@@ -60,10 +58,9 @@ class DataBloc extends Bloc<UserDataEvent, DataState> {
       if (event is GetUserData) {
         try {
           emit(DataLoadingState());
-          UserDataModel userDataModel = await UserController.getUserDetails(
-         
-          );
-          emit(DataSuccessState());
+          Logger().wtf("userData 1");
+          UserDataModel userDataModel = await UserController.getUserDetails();
+          emit(DataSuccessState(userDataModel));
         } on SocketException {
           emit(DataFailedState(message: "Socket Exception"));
         } on HttpException {

@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_patterns/controller/user_controller.dart';
 import 'package:bloc_patterns/model/user_model.dart';
-import 'package:bloc_patterns/views/home_page.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 class LoginEvent extends Equatable {
   @override
@@ -43,20 +40,21 @@ class LoginLoadingState extends LoginState {
   List<Object?> get props => [];
 }
 
+Future<void> saveLoginData(UserModel model) async {
+  // Create storage
+  const storage = FlutterSecureStorage();
+  Logger().wtf(jsonEncode(model));
+  await storage.write(
+    key: "LoginData",
+    value: jsonEncode(model),
+  );
+  Logger().d("go to Home page");
+  // Get.to(const HomePage());
+}
+
 //Login success state
 class LoginSuccessState extends LoginState {
   final UserModel modelData;
-
-  Future<void> saveLoginData() async {
-    // Create storage
-    final storage = const FlutterSecureStorage();
-    await storage.write(
-      key: "LoginData",
-      value: jsonEncode(modelData),
-    );
-    print("go to page");
-    // Get.to(const HomePage());
-  }
 
   LoginSuccessState(this.modelData);
   @override
@@ -82,8 +80,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             event.username,
             event.password,
           );
-
           emit(LoginSuccessState(userModel));
+          saveLoginData(userModel);
         } on SocketException {
           emit(LoginFailedState(message: "Socket Exception"));
         } on HttpException {

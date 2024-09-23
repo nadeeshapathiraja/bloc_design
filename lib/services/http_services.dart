@@ -27,7 +27,7 @@ Future<Response> getRequest(String url, {String? token}) async {
     headers['Authorization'] = 'Bearer $token';
   }
 
-  return await post(
+  return await get(
     Uri.parse(url),
     headers: headers,
   );
