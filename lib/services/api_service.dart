@@ -5,5 +5,7 @@ class ApiService {
 
   static const getUserData = '$baseUrl/auth/me';
 
+  static const getUseTaskList = '$baseUrl/todos';
+
   // static const loginApi = '$baseUrl/user/login';
 }

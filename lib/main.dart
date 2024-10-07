@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/theme_provider.dart';
+import 'views/task_app/task_app.dart';
 
 void main() {
   runApp(
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
             //   useMaterial3: true,
             // ),
             darkTheme: darkMode,
-            home: const LoginPage(),
+            home: const TaskApp(),
           );
         },
       ),
